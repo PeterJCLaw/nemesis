@@ -20,6 +20,7 @@
         <script type="text/javascript" src="static/js/college.js"></script>
         <script type="text/javascript" src="static/js/auth_view.js"></script>
         <script type="text/javascript" src="static/js/edit_view.js"></script>
+        <script type="text/javascript" src="static/js/mediaconsent_view.js"></script>
         <script type="text/javascript" src="static/js/register_view.js"></script>
         <script type="text/javascript" src="static/js/college_list_view.js"></script>
         <script type="text/javascript" src="static/js/self_view.js"></script>
@@ -31,12 +32,10 @@
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="navbar-inner">
                 <div class="container">
-                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </a>
                     <a class="brand" href="#">Userman</a>
+                    <ul class="nav navbar-nav">
+                        <li id="media-consent-link"></li>
+                    </ul>
                     <form id="login" class="navbar-form pull-right">
                         <input id="username" class="span2" type="text" placeholder="Username">
                         <input id="password" class="span2" type="password" placeholder="Password">
@@ -54,6 +53,12 @@
                 </div>
                 <div class="span9">
                     <div id="data-edit-user">
+                    </div>
+                    <div id="data-media-consent">
+                        <div id="data-media-consent-select">
+                        </div>
+                        <div id="data-media-consent-confirm">
+                        </div>
                     </div>
                     <div id="data-register-users">
                     </div>
@@ -85,7 +90,33 @@
                 <li class="register"><a href="#reg-{college.canonical_name}"><i class="icon-pencil"></i> Register Users</a></li>
             </script>
 
-            <script type="text/template" id="media_consent">
+            <script type="text/template" id="media_consent_link">
+                <a href="#mediaconsent">Administer Media Consent</a>
+            </script>
+
+            <script type="text/template" id="select_media_consent">
+                <form id="mediaconsent_select_form">
+                <fieldset id="mediaconsent-select">
+                    <input required type="text" value="{username}" placeholder="Username" id="mediaconsent_select_username">
+                    <button type="submit" class="btn btn-primary" id="mediaconsent-select">Load</button>
+                </fieldset>
+                </form>
+            </script>
+
+            <script type="text/template" id="confirm_media_consent">
+                <p class="withdrawn-warning">{withdrawn_text}</p>
+                <dl>
+                    <dt>First Name</dt><dd>{user.first_name}</dd>
+                    <dt>Last Name</dt><dd>{user.last_name}</dd>
+                    <dt>Username</dt><dd>{user.username}</dd>
+                    <dt>College</dt><dd>{college_name}</dd>
+                </dl>
+                <fieldset id="mediaconsent-confirm" {html:disabled}>
+                    <button type="submit" class="btn btn-primary" id="mediaconsent-confirm" {html:disabled}>Confirm</button>
+                </fieldset>
+            </script>
+
+            <script type="text/template" id="media_consent_icon">
                 <i class="icon-{icon}" title="{first} {last} has {not}given media consent"></i>
             </script>
 

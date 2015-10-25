@@ -1,8 +1,10 @@
+
 var current_user = null;
 var lastHash = "";
 var hashChangeEventListener = null;
 var ev = null;
 var cv = null;
+var mcv = null;
 var rv = null;
 var sv = null;
 var wv = null;
@@ -17,6 +19,8 @@ $(document).ready(function() {
     var av = new AuthView($("#login-error"));
     cv = new CollegeListView($("#data-college-list"));
     ev = new EditView($("#data-edit-user"), cv.refresh);
+    mcv = new MediaConsentView($("#data-media-consent-select"),
+                               $("#data-media-consent-confirm"));
     rv = new RegisterView($("#data-register-users"));
     sv = new SelfView($("#logged-in-user"));
     wv = new WorkingView($("#messages"));
@@ -27,6 +31,7 @@ $(document).ready(function() {
             user.fetch_colleges(function(user) {
                 cv.render_colleges(user.colleges, !user.is_student);
             });
+            mcv.show_link($("#media-consent-link"), user);
             $("#login").hide();
             $("#login-error").hide();
             sv.show(user.username);
@@ -63,6 +68,7 @@ function hashChangeEventHandler() {
 function handle_hash() {
     ev.hide();
     rv.hide();
+    mcv.hide();
     cv.set_all_inactive();
     if (location.hash.substring(1,5) == "edit") {
         var username = location.hash.substring(6,location.hash.length);
@@ -73,6 +79,9 @@ function handle_hash() {
     } else if (location.hash.substring(1,4) == "reg") {
         rv.show(college_name_from_hash());
         cv.set_register_active(college_name_from_hash());
+    } else if (location.hash.substring(1,13) == "mediaconsent") {
+        var username = location.hash.substring(14,location.hash.length);
+        mcv.show(username, current_user);
     }
 }
 

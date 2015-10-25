@@ -18,7 +18,7 @@ var CollegeListView = function() {
             }
 
             var result = "";
-            var media_consent_template = TemplateExpander.template('media_consent');
+            var media_consent_template = TemplateExpander.template('media_consent_icon');
             for (var i = 0; i < college_list.length; i++) {
                 var college = college_list[i];
                 $(college.users).each(function(idx, u) {

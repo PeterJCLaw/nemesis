@@ -7,6 +7,7 @@ var User = function() {
         var password = "";
         this.colleges = [];
         this.has_withdrawn = false;
+        this.is_mediaconsent_admin = false;
         var that = this;
 
         this.login = function(pw, success_callback, error_callback) {
@@ -57,6 +58,7 @@ var User = function() {
             to.is_blueshirt = from.is_blueshirt;
             to.is_student   = from.is_student;
             to.is_team_leader = from.is_team_leader;
+            to.is_mediaconsent_admin = from.is_mediaconsent_admin;
             to.has_media_consent = from.has_media_consent;
             to.has_withdrawn = from.has_withdrawn;
         };
