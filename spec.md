@@ -1,6 +1,6 @@
 #Nemesis REST API spec
 
-##Version 3.8.0 [SemVer](http://semver.org/)
+##Version 3.9.0 [SemVer](http://semver.org/)
 
 This document explains all the Nemesis API endpoints. The production version of
 this API runs on http://studentrobotics.org/userman. URL components are of the
@@ -57,7 +57,8 @@ Gives a list of all colleges
 
 ####Parameters
 
-None
+* `include_college_details`: optional: if present alters the response format to
+                             include the details of the colleges.
 
 ####Response code
 
@@ -68,6 +69,12 @@ None
 The object contains:
 
 * `colleges`: a list of all the college ids
+* `college_details`: a map of college ids to information about that college.
+                     Only present if `include_college_details` was present in the
+                     request. The format of the information is the same as for
+                     the per-college endpoint (`/colleges/:id` below), when that
+                     endpoint is requested without its `include_user_details`
+                     parameter, and follows the same access rules.
 
 
 ##GET /colleges/:id
@@ -76,7 +83,8 @@ Gives information about the college matching the `id` url parameter
 
 ####Parameters
 
-None
+* `include_user_details`: optional: if present, alters the response format to
+                          include the details of the users.
 
 ####Response code
 
@@ -91,6 +99,11 @@ If the response code is 200 the object contains:
 * `users`: A list of usernames in that college that the authenticated user can
            administrate. Example `['abc1']`. Only given if authentication has
            happened and the user is a member of this college.
+* `user_details`: A map of usernames (from the `users` list) to details about that
+                  user. Only present if `include_user_details` was present in the
+                  request. The format of the information is the same as for the
+                  per-college endpoint (`/user/:username` below) and follows the
+                  same access rules.
 * `teams`: a list of all the teams in that college. Example `['team-ABC']`.
 * `college_name`: the name of the college.
 * `counts`: a mapping of useful counts:
