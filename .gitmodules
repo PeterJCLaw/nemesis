@@ -1,3 +1,3 @@
 [submodule "nemesis/libnemesis"]
 	path = nemesis/libnemesis
-	url = git://git.srobo.org/libnemesis.git
+	url = https://github.com/srobo/libnemesis.git
