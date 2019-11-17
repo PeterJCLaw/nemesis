@@ -1,0 +1,65 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/python:2.7
+
+      - image: peterjclaw/sr-dev-ldap
+        # Set an explicit name for the LDAP server host so that it can bind to
+        # that distinctly from "localhost", which otherwise causes issues. See
+        # https://github.com/osixia/docker-openldap/issues/373 for what the
+        # failure looks like.
+        name: sr-dev-ldap
+
+    steps:
+      - checkout
+
+      - run: git submodule update --init --recursive
+
+      # Set up a cached virtualenv in which to install dependencies
+      - restore_cache:
+          name: Restore dependency cache
+          key: deps-venv-{{ .Branch }}-{{ checksum ".circleci/requirements.txt" }}
+      - run:
+          name: Install base dependencies
+          command: sudo apt install libsasl2-dev python-dev libldap2-dev libssl-dev ldap-utils
+      - run:
+          name: Create virtualenv
+          command: |
+            python -m virtualenv venv
+            . venv/bin/activate
+            pip install -r .circleci/requirements.txt
+      - save_cache:
+          name: Save dependency cache
+          key: deps-venv-{{ .Branch }}-{{ checksum ".circleci/requirements.txt" }}
+          paths:
+            - "venv"
+
+      - run:
+          name: Configure LDAP connection
+          command: |
+            echo "[ldap]" > nemesis/libnemesis/libnemesis/srusers/local.ini
+            echo "host = sr-dev-ldap" >> nemesis/libnemesis/libnemesis/srusers/local.ini
+            echo "password = 123456" >> nemesis/libnemesis/libnemesis/srusers/local.ini
+
+      - run:
+          name: Wait for LDAP server to be running
+          command: |
+            set +e  # we use exit codes for control flow
+            for x in $(seq 60)
+            do
+              ldapsearch -h sr-dev-ldap -D 'cn=Manager,o=sr' -w 123456 -b 'o=sr'
+              if [ $? -ne 0 ]
+              then
+                sleep 0.5
+              else
+                exit 0
+              fi
+            done
+
+      - run:
+          name: Run tests
+          command: |
+            . venv/bin/activate
+            ./run-tests
