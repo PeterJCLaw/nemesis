@@ -8,33 +8,48 @@ the user accounts of the team (including their own).
 
 ## Contributing
 
-Please file issues on Student Robotics [trac](http://trac.srobo.org) if you can.
-If you can't, please raise issues on GitHub instead, but be aware they'll
-be moved to trac for handling.
+Please file issues using the [GitHub issues](https://github.com/srobo/nemesis/issues)
+for the [canonical repo](https://github.com/srobo/nemesis).
 
-Patches should be submitted to SR's [gerrit](http://gerrit.srobo.org) if
-possible, but GitHub pull requests (to @PeterJCLaw) are OK if you can't do this.
-These are likely to be moved to gerrit for handling.
+For actual changes, please make pull requests on GitHub against the srobo fork
+and ping [@PeterJCLaw](https://github.com/PeterJCLaw) for review.
 
 ## Development on a clone of the deployment server
 
-1. Get an srobo dev server [here](https://github.com/samphippen/badger-vagrant)
+1. Get an srobo dev server from https://github.com/srobo/server-puppet/
 2. You've got nemesis in `/srv/nemesis`
 3. Run the current set of valid tests using the `./run-tests` script.
 4. There are some obsolete javascript client tests in `test/client-tests`.
    In theory, the dependencies could be installed with `./get-dependencies.sh`,
    see the readme in the same directory to run the tests.
 
-Once you've greenlit all the tests, make some changes, go wild, send me patches
-either via GitHub or via gerrit and I'll review them for you!
+Once you've greenlit all the tests, make some changes, go wild!
 
-## Development server, avoiding WSGI
+## Development server (recommended)
 
-It's also possible to develop using the srobo dev server just as the LDAP host.
-For this, you'll need to install python, nose, python sqlite3, pyldap & flask
-onto your dev machine, and the configure nemesis to use a remote LDAP host.
-This configuration is done in the config.ini within the `srusers` submodule of the
-`libnemesis` submodule.
+In this mode you can either:
+
+ * use a clone of the development server as the LDAP host (see instructions
+   above) and then port-forward access to the LDAP server it has, or
+ * grab a copy of the SR [development LDAP docker image][sr-dev-ldap]:
+
+   `docker pull peterjclaw/sr-dev-ldap`
+
+   then
+
+   `docker run --rm --publish 3890:389 --name sr-dev-ldap peterjclaw/sr-dev-ldap`
+
+To run the server locally you'll need to install:
+
+ * Sqlite 3
+ * Python 2.7
+ * `flask`
+ * `python-ldap`
+ * `unidecode`
+ * `python-nose` (for running the tests)
+
+Configuring the LDAP server to use is done by adding a `local.ini` within the
+within the `srusers` submodule of the `libnemesis` submodule.
 
 There's then a development mode server which you can run:
 
@@ -48,3 +63,5 @@ You'll also need to create the sqlite DB manually, which can be done using:
 
 Note that this will only create the DB if it's missing, and not update it or remove it.
 As a result, if the schema changes the DB must be manually removed & re-created.
+
+[sr-dev-ldap]: https://hub.docker.com/r/peterjclaw/sr-dev-ldap
