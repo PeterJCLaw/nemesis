@@ -1,5 +1,7 @@
 # Nemesis
 
+[![CircleCI](https://circleci.com/gh/srobo/nemesis.svg?style=svg)](https://circleci.com/gh/srobo/nemesis)
+
 This is Nemesis, a system for allowing team leaders running teams for the
 [Student Robotics](https://studentrobotics.org) (SR) competition to administrate
 the user accounts of the team (including their own).
