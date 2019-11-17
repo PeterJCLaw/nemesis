@@ -2,10 +2,11 @@
 
 echo "Resetting LDAP"
 python nemesis/libnemesis/tests/reset_ldap.py
+result=$?
 
 echo "Nose API and Unit tests"
 nosetests test/api-tests/ test/unit-tests/
-result=$?
+result=$((result | $?))
 
 echo "Jasmine JS tests"
 jasmine-node test/js-tests
