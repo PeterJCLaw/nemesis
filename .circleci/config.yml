@@ -70,4 +70,10 @@ jobs:
           name: Run tests
           command: |
             . venv/bin/activate
+
+            # Run the development server in the background
+            python nemesis/app.py 2>&1 > server-log.txt &
+            server_pid=$!
+            trap "kill -SIGINT $server_pid" exit INT TERM
+
             ./run-tests
