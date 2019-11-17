@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:2.7
+      - image: circleci/python:2.7-node
 
       - image: peterjclaw/sr-dev-ldap
         # Set an explicit name for the LDAP server host so that it can bind to
@@ -23,7 +23,7 @@ jobs:
           key: deps-venv-{{ .Branch }}-{{ checksum ".circleci/requirements.txt" }}
       - run:
           name: Install base dependencies
-          command: sudo apt install libsasl2-dev python-dev libldap2-dev libssl-dev ldap-utils
+          command: sudo apt install libsasl2-dev python-dev libldap2-dev libssl-dev ldap-utils sqlite3
       - run:
           name: Create virtualenv
           command: |
@@ -37,11 +37,19 @@ jobs:
             - "venv"
 
       - run:
+          name: Install JS dependencies
+          command: sudo npm install -g jasmine-node
+
+      - run:
           name: Configure LDAP connection
           command: |
             echo "[ldap]" > nemesis/libnemesis/libnemesis/srusers/local.ini
             echo "host = sr-dev-ldap" >> nemesis/libnemesis/libnemesis/srusers/local.ini
             echo "password = 123456" >> nemesis/libnemesis/libnemesis/srusers/local.ini
+
+      - run:
+          name: Setup Sqlite database
+          command: ./nemesis/scripts/make_db.sh
 
       - run:
           name: Wait for LDAP server to be running
