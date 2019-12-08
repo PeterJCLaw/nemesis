@@ -25,7 +25,7 @@ except NameError:
 
 def log_action(action, *args, **kwargs):
     keyed = [k + ": " + str(v) for k, v in kwargs.items()]
-    details = ", ".join(map(str, args) + keyed)
+    details = ", ".join([str(x) for x in args] + keyed)
     logging.info("%s: %s", action, details)
 
 def is_email_valid(email):
