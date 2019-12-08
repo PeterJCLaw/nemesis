@@ -2,5 +2,6 @@
 {
     "python.autoComplete.extraPaths": [
         "nemesis/libnemesis"
-    ]
+    ],
+    "python.pythonPath": "/home/peter/.virtualenvs/nemesis2/bin/python"
 }
