@@ -1,7 +1,14 @@
 
-import httplib
+try:
+    import httplib
+    import urllib
+except ImportError:
+    import http.client
+    httplib = http.client
+    import urllib.parse
+    urllib = urllib.parse
+
 import base64
-import urllib
 import sys
 import os
 

@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 import datetime
 import logging
 import unittest
-import StringIO
+import io
 import sys
 import os
 
@@ -246,7 +246,7 @@ class TestVerifyCodeHelpers(unittest.TestCase):
 class TestHelpersLogging(unittest.TestCase):
 
     def setUp(self):
-        self._stream = StringIO.StringIO()
+        self._stream = io.StringIO()
         defLoggger = logging.getLogger()
         self._handler = logging.StreamHandler(self._stream)
         defLoggger.addHandler(self._handler)
