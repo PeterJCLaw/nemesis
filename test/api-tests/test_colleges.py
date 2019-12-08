@@ -20,7 +20,8 @@ def test_colleges_blueshirt():
     print r.status
     print data
     assert r.status == 200
-    assert len(json.loads(data)["colleges"]) == 2
+    colleges = sorted(json.loads(data)["colleges"])
+    assert colleges == ["college-1", "college-2"]
 
 def test_colleges_teacher_cant_access():
     params = {"username":"teacher_coll1", "password":"facebees"}
