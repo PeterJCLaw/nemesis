@@ -38,8 +38,9 @@ def server_request(method, endpoint, params=None, headers=None):
     endpoint = modify_endpoint(endpoint)
     if params != None:
         if "username" in params and "password" in params:
-            base64string = base64.encodestring('%s:%s' % (params["username"], params["password"])).replace('\n', '')
-            headers["Authorization"] = "Basic %s" % base64string
+            credential = '%s:%s' % (params["username"], params["password"])
+            base64bytes = base64.b64encode(credential.encode('utf-8'))
+            headers["Authorization"] = "Basic %s" % base64bytes.decode('utf-8')
             del params["username"]
             del params["password"]
         unicode_encode(params)
@@ -50,7 +51,7 @@ def server_request(method, endpoint, params=None, headers=None):
 
     resp = conn.getresponse()
     data = resp.read()
-    return resp, data
+    return resp, data.decode('utf-8')
 
 def server_post(endpoint, params=None):
     headers = {"Content-type": "application/x-www-form-urlencoded",
