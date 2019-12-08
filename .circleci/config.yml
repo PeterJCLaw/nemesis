@@ -1,7 +1,17 @@
 version: 2
 
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build-27
+      - build-35
+      - build-36
+      - build-37
+      - build-38
+
 jobs:
-  build:
+  build-27:
     docker:
       - image: circleci/python:2.7-node
 
@@ -77,3 +87,101 @@ jobs:
             trap "kill -SIGINT $server_pid" exit INT TERM
 
             ./run-tests
+
+  build-35: &build-template
+    docker:
+      - image: circleci/python:3.5-node
+
+      - image: peterjclaw/sr-dev-ldap
+        # Set an explicit name for the LDAP server host so that it can bind to
+        # that distinctly from "localhost", which otherwise causes issues. See
+        # https://github.com/osixia/docker-openldap/issues/373 for what the
+        # failure looks like.
+        name: sr-dev-ldap
+
+    steps:
+      - checkout
+
+      - run: git submodule update --init --recursive
+
+      # Set up a cached virtualenv in which to install dependencies
+      - restore_cache:
+          name: Restore dependency cache
+          key: deps-venv-{{ .Branch }}-{{ checksum ".circleci/requirements.txt" }}
+      - run:
+          name: Install base dependencies
+          command: sudo apt install libsasl2-dev python3-dev libldap2-dev libssl-dev ldap-utils sqlite3
+      - run:
+          name: Create virtualenv
+          command: |
+            python -m venv venv
+            . venv/bin/activate
+            pip install -r .circleci/requirements.txt
+      - save_cache:
+          name: Save dependency cache
+          key: deps-venv-{{ .Branch }}-{{ checksum ".circleci/requirements.txt" }}
+          paths:
+            - "venv"
+
+      - run:
+          name: Install JS dependencies
+          command: sudo npm install -g jasmine-node
+
+      - run:
+          name: Configure LDAP connection
+          command: |
+            echo "[ldap]" > nemesis/libnemesis/libnemesis/srusers/local.ini
+            echo "host = sr-dev-ldap" >> nemesis/libnemesis/libnemesis/srusers/local.ini
+            echo "password = 123456" >> nemesis/libnemesis/libnemesis/srusers/local.ini
+
+      - run:
+          name: Setup Sqlite database
+          command: ./nemesis/scripts/make_db.sh
+
+      - run:
+          name: Wait for LDAP server to be running
+          command: |
+            set +e  # we use exit codes for control flow
+            for x in $(seq 60)
+            do
+              ldapsearch -h sr-dev-ldap -D 'cn=Manager,o=sr' -w 123456 -b 'o=sr'
+              if [ $? -ne 0 ]
+              then
+                sleep 0.5
+              else
+                exit 0
+              fi
+            done
+
+      - run:
+          name: Run tests
+          command: |
+            . venv/bin/activate
+
+            # Run the development server in the background
+            python nemesis/app.py 2>&1 > server-log.txt &
+            server_pid=$!
+            trap "kill -SIGINT $server_pid" exit INT TERM
+
+            ./run-tests
+
+  build-36:
+    <<: *build-template
+    docker:
+      - image: circleci/python:3.6-node
+      - image: peterjclaw/sr-dev-ldap
+        name: sr-dev-ldap
+
+  build-37:
+    <<: *build-template
+    docker:
+      - image: circleci/python:3.7-node
+      - image: peterjclaw/sr-dev-ldap
+        name: sr-dev-ldap
+
+  build-38:
+    <<: *build-template
+    docker:
+      - image: circleci/python:3.8-node
+      - image: peterjclaw/sr-dev-ldap
+        name: sr-dev-ldap
