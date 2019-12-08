@@ -141,7 +141,7 @@ def test_user_get_checks_same_email():
     assert r.status == 200, data
 
     user_info = json.loads(data)
-    assert not user_info.has_key('new_email'), \
+    assert 'new_email' not in user_info, \
         "Should not have a new_email key when the new one and the current one match"
 
 @with_setup(test_helpers.delete_db)

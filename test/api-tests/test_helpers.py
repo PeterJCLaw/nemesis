@@ -31,7 +31,7 @@ def server_post(endpoint, params=None):
     headers = {"Content-type": "application/x-www-form-urlencoded",
                 "Accept": "text/plain"}
     if params != None:
-        if params.has_key("username") and params.has_key("password"):
+        if "username" in params and "password" in params:
             base64string = base64.encodestring('%s:%s' % (params["username"], params["password"])).replace('\n', '')
             headers["Authorization"] = "Basic %s" % base64string
             del params["username"]
@@ -52,7 +52,7 @@ def server_get(endpoint, params=None):
     endpoint = modify_endpoint(endpoint)
     headers = {}
     if params != None:
-        if params.has_key("username") and params.has_key("password"):
+        if "username" in params and "password" in params:
             base64string = base64.encodestring('%s:%s' % (params["username"], params["password"])).replace('\n', '')
             headers["Authorization"] = "Basic %s" % base64string
             del params["username"]
