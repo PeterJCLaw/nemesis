@@ -1,3 +1,4 @@
+from __future__ import print_function, unicode_literals
 
 from datetime import datetime, timedelta
 from nose.tools import with_setup
@@ -17,7 +18,7 @@ def test_simple_properties():
     assert ps.last_error == 'bacon'
 
 def test_template_vars_property():
-    print 'bacon'
+    print('bacon')
     ps = PendingSend('abc')
     assert ps.template_vars is None
 

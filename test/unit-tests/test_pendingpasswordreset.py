@@ -1,3 +1,4 @@
+from __future__ import print_function, unicode_literals
 
 from datetime import timedelta
 from nose.tools import raises, with_setup
@@ -113,4 +114,4 @@ def test_send_email():
 @raises(AttributeError)
 def test_invalid_property():
     ppr = PendingPasswordReset('abc')
-    print ppr.bacon
+    print(ppr.bacon)

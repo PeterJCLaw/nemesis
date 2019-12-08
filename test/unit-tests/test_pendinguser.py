@@ -1,3 +1,4 @@
+from __future__ import print_function, unicode_literals
 
 from datetime import timedelta
 from nose.tools import raises, with_setup
@@ -133,4 +134,4 @@ def test_delete():
 @raises(AttributeError)
 def test_invalid_property():
     pu = PendingUser('abc')
-    print pu.bacon
+    print(pu.bacon)

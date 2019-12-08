@@ -1,3 +1,5 @@
+from __future__ import print_function, unicode_literals
+
 import test_helpers
 import json
 
@@ -6,7 +8,7 @@ def test_colleges_no_user():
 
     r,data = test_helpers.server_get("/colleges", params)
 
-    print r,data
+    print(r,data)
     assert r.status == 403
 
 def test_colleges_no_password():
@@ -17,8 +19,8 @@ def test_colleges_no_password():
 def test_colleges_blueshirt():
     params = {"username":"blueshirt", "password":"blueshirt"}
     r,data = test_helpers.server_get("/colleges", params)
-    print r.status
-    print data
+    print(r.status)
+    print(data)
     assert r.status == 200
     assert len(json.loads(data)["colleges"]) == 2
 
