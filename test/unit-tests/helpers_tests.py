@@ -35,7 +35,7 @@ class TestHelpers(unittest.TestCase):
         conn.commit()
 
     def _make_old(self, table, username):
-        old_time = datetime.datetime(2012, 01, 01).strftime('%Y-%m-%d %H:%M:%S')
+        old_time = datetime.datetime(2012, 1, 1).strftime('%Y-%m-%d %H:%M:%S')
         self._exec('UPDATE ' + table + ' SET request_time=? WHERE username=?', \
                         (old_time, username))
 
