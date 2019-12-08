@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 
+from __future__ import unicode_literals
+
 import datetime
 import logging
 import unittest
@@ -186,7 +188,7 @@ class TestValidityHelpers(unittest.TestCase):
     def test_is_email_valid(self):
         valids = ['pe@srobo.org', 'a@b.cc', 'sam@example.com']
         invalids = ['@srobo.org', '@b.cc', 'a@b', 'a@.cc', 'a@b.', 'a@b.c', 'a@cc', \
-                    'bacon', 'bacon.cc', u"\u5317\u4EB0@nope.org"]
+                    'bacon', 'bacon.cc', "\u5317\u4EB0@nope.org"]
         for email in valids:
             is_valid = helpers.is_email_valid(email)
             assert is_valid, email
@@ -196,46 +198,49 @@ class TestValidityHelpers(unittest.TestCase):
             assert not is_valid, email
 
     def test_is_name_valid(self):
-        valids = ['valid name', 'Valid', u"Lycée Emmanuel", u"émmanuel", \
-                  "Teal'c", u"\u5317\u4EB0", \
+        valids = ['valid name', 'Valid', "Lycée Emmanuel", "émmanuel", \
+                  "Teal'c", "\u5317\u4EB0", \
                   'th"at', 'spa(m', 'spa)m', 'spa&m', 'spa=m']
         invalids = ['@srobo', '2this', '"that', '(m', ')m', '&m', '=m']
         for name in valids:
-            is_valid = helpers.is_name_valid(unicode(name))
+            is_valid = helpers.is_name_valid(name)
             assert is_valid, name
 
         for name in invalids:
-            is_valid = helpers.is_name_valid(unicode(name))
+            is_valid = helpers.is_name_valid(name)
             assert not is_valid, name
 
 class TestVerifyCodeHelpers(unittest.TestCase):
-    def assert_creates_code_inner(self, username, email):
-        code = helpers.create_verify_code(username, email)
-        assert username not in code, "Username should not be in code"
-        assert email not in code, "email address should not appear in the code"
+    def assert_creates_code(self, username_str, email_str):
+        code = helpers.create_verify_code(username_str, email_str)
+        assert username_str not in code, "Username should not be in code"
+        assert email_str not in code, "email address should not appear in the code"
 
-    def assert_creates_code(self, username, email):
-        self.assert_creates_code_inner(username, email)
-        self.assert_creates_code_inner(username.encode('utf-8'), email.encode('utf-8'))
+        username_bytes = username_str.encode('utf-8')
+        email_bytes = email_str.encode('utf-8')
 
-    def test_creates_code_str(self):
+        code = helpers.create_verify_code(username_bytes, email_bytes)
+        assert username_str not in code, "Username should not be in code"
+        assert email_str not in code, "email address should not appear in the code"
+
+    def test_creates_code_ascii(self):
         username = "username"
         email = "nope@somewhere.com"
-        self.assert_creates_code_inner(username, email)
+        self.assert_creates_code(username, email)
+
+    def test_creates_code_latin1(self):
+        username = b"usernam\xe9" # e acute
+        email = "nope@somewhere.com"
+
+        username_str = username.decode('latin-1')
+
+        code = helpers.create_verify_code(username, email)
+        assert username_str not in code, "Username should not be in code"
+        assert email not in code, "email address should not appear in the code"
 
     def test_creates_code_unicode(self):
-        username = u"username"
-        email = u"nope@somewhere.com"
-        self.assert_creates_code(username, email)
-
-    def test_creates_code_unicode_2(self):
-        username = u"usernam\xe9" # e acute
-        email = u"nope@somewhere.com"
-        self.assert_creates_code(username, email)
-
-    def test_creates_code_unicode_3(self):
-        username = u"username"
-        email = u"nop\u2658@somewhere.com"
+        username = "username"
+        email = "nop\u2658@somewhere.com"
         self.assert_creates_code(username, email)
 
 class TestHelpersLogging(unittest.TestCase):

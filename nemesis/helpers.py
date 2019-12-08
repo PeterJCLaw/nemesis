@@ -18,6 +18,11 @@ sys.path.insert(0, PATH + '/libnemesis/')
 
 from libnemesis import User
 
+try:
+    unicode
+except NameError:
+    unicode = str
+
 def log_action(action, *args, **kwargs):
     keyed = [k + ": " + str(v) for k, v in kwargs.items()]
     details = ", ".join(map(str, args) + keyed)
@@ -26,7 +31,7 @@ def log_action(action, *args, **kwargs):
 def is_email_valid(email):
     try:
         # Don't allow any interesting characters -- we can't send to them.
-        str(email)
+        email.encode('ascii')
     except:
         return False
     return re.match(r'.+@.+\...+', email)

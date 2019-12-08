@@ -68,7 +68,7 @@ def test_user_colleges():
     data = json.loads(data)
 
     assert r.status == 200
-    assert "college-1" in data[u"colleges"]
+    assert "college-1" in data["colleges"]
 
 def test_user_teams():
     params = {"username":"student_coll1_1",
@@ -79,7 +79,7 @@ def test_user_teams():
     data = json.loads(data)
 
     assert r.status == 200
-    assert ["team-ABC"] == data[u"teams"]
+    assert ["team-ABC"] == data["teams"]
 
 def test_user_properties_blueshirt():
     params = {"username":"blueshirt",
