@@ -260,8 +260,12 @@ class TestHelpersLogging(unittest.TestCase):
     def test_log_action(self):
         helpers.log_action('my-action', 'foo', bar = 'jam', spam = 'ham')
         logged = self._stream.getvalue()
-        expected = "my-action: foo, bar: jam, spam: ham"
-        assert expected in logged
+        expected = (
+            # Cope with variable dictionary ordering
+            "my-action: foo, bar: jam, spam: ham\n",
+            "my-action: foo, spam: ham, bar: jam\n",
+        )
+        assert logged in expected
 
     def test_log_action_objects(self):
         class Foo(object):
