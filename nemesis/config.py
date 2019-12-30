@@ -1,5 +1,9 @@
 
-from ConfigParser import SafeConfigParser
+try:
+    from ConfigParser import SafeConfigParser
+except ImportError:
+    from configparser import SafeConfigParser
+
 import logging
 import logging.config
 import os.path

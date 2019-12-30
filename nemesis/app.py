@@ -227,7 +227,7 @@ def set_user_details(requesting_user, userid):
     assert can_admin
 
     user_to_update = User.create_user(userid)
-    if request.form.has_key("new_email") and not requesting_user.is_blueshirt:
+    if "new_email" in request.form and not requesting_user.is_blueshirt:
         new_email = request.form["new_email"]
         request_new_email(user_to_update, new_email)
     # Students aren't allowed to update their own names
@@ -239,11 +239,11 @@ def set_user_details(requesting_user, userid):
         lname = request.form.get("new_last_name")
         if lname:
             user_to_update.set_last_name(lname)
-    if request.form.has_key("new_team"):
+    if "new_team" in request.form:
         team = request.form["new_team"]
         if (not user_to_update.is_blueshirt) and requesting_user.manages_team(team):
             user_to_update.set_team(team)
-    if request.form.has_key("new_type") and requesting_user.is_teacher and user_to_update != requesting_user:
+    if "new_type" in request.form and requesting_user.is_teacher and user_to_update != requesting_user:
         if request.form["new_type"] == 'student':
             user_to_update.make_student()
         elif request.form["new_type"] == 'team-leader':
@@ -256,7 +256,7 @@ def set_user_details(requesting_user, userid):
 
     # Do this separately and last because it makes an immediate change
     # to the underlying database, rather than waiting for save().
-    if request.form.has_key("new_password"):
+    if "new_password" in request.form:
         user_to_update.set_password(request.form["new_password"])
 
     return '{}', 200

@@ -18,15 +18,20 @@ sys.path.insert(0, PATH + '/libnemesis/')
 
 from libnemesis import User
 
+try:
+    unicode
+except NameError:
+    unicode = str
+
 def log_action(action, *args, **kwargs):
-    keyed = [k + ": " + str(v) for k, v in kwargs.iteritems()]
-    details = ", ".join(map(str, args) + keyed)
+    keyed = [k + ": " + str(v) for k, v in kwargs.items()]
+    details = ", ".join([str(x) for x in args] + keyed)
     logging.info("%s: %s", action, details)
 
 def is_email_valid(email):
     try:
         # Don't allow any interesting characters -- we can't send to them.
-        str(email)
+        email.encode('ascii')
     except:
         return False
     return re.match(r'.+@.+\...+', email)
@@ -37,7 +42,7 @@ def is_name_valid(name):
     first = unidecode(name[0])[0]
     return first.isalpha()
 
-def ensure_str(string):
+def ensure_bytes(string):
     if isinstance(string, unicode):
         return string.encode('utf-8')
     return string
@@ -49,7 +54,7 @@ def create_verify_code(username, string_data):
     The aim here is mostly to check that it exists, so absolute security
     isn't strictly needed. The overall length is 160 characters.
     """
-    combined = ensure_str(username) + ensure_str(string_data)
+    combined = ensure_bytes(username) + ensure_bytes(string_data)
     user_part = hashlib.md5(combined).hexdigest()
     random_part = hex(random.getrandbits(128))[2:-1]
     code = random_part + user_part

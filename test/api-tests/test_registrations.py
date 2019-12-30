@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 
 from nose.tools import with_setup
 import sys
@@ -82,8 +83,8 @@ def test_registration_user_and_form():
 @with_setup(remove_user('1_rt1'), remove_user('1_rt1'))
 @with_setup(test_helpers.delete_db, test_helpers.delete_db)
 def test_registration_form_unicode():
-    fname = u"reg\u2658"
-    lname = u"tom\u2658"
+    fname = "reg\u2658"
+    lname = "tom\u2658"
     form_helper("teacher_coll1", "facebees", fname, lname)
 
 @with_setup(remove_user('1_rt1'), remove_user('1_rt1'))
@@ -243,7 +244,7 @@ def test_registration_bad_email():
         test_helpers.assert_no_emails()
 
     yield helper, "nope"
-    yield helper, u"\u2658@nope.com"
+    yield helper, "\u2658@nope.com"
 
 @with_setup(remove_user('1_rt1'), remove_user('1_rt1'))
 @with_setup(test_helpers.delete_db, test_helpers.delete_db)
