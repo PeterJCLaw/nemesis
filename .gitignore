@@ -2,4 +2,5 @@ venv
 *.pyc
 build
 nemesis/nemesis.wsgi
+nemesis/wsgi.py
 /nemesis/local.ini
