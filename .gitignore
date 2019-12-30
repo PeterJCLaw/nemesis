@@ -2,5 +2,6 @@ venv
 *.pyc
 build
 /nemesis/local.ini
+/nemesis/nemesis.gunicorn-config.py
 /nemesis/nemesis.wsgi
 /nemesis/wsgi.py
