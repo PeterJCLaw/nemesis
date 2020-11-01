@@ -1,0 +1,5 @@
+-r nemesis/libnemesis/requirements.txt
+
+python-ldap
+Unidecode
+Flask
