@@ -1,18 +1,12 @@
-version: 2
+version: 2.1
 
-workflows:
-  version: 2
-  build_and_test:
-    jobs:
-      - build-35
-      - build-36
-      - build-37
-      - build-38
-
-jobs:
-  build-35: &build-template
+executors:
+  python:
+    parameters:
+      version:
+        type: string
     docker:
-      - image: circleci/python:3.5-node
+      - image: circleci/python:<< parameters.version >>-node
 
       - image: peterjclaw/sr-dev-ldap
         # Set an explicit name for the LDAP server host so that it can bind to
@@ -20,6 +14,25 @@ jobs:
         # https://github.com/osixia/docker-openldap/issues/373 for what the
         # failure looks like.
         name: sr-dev-ldap
+
+workflows:
+  version: 2.1
+  build_and_test:
+    jobs:
+      - build-test:
+          matrix:
+            parameters:
+              version: ["3.5", "3.6", "3.7", "3.8", "3.9"]
+
+jobs:
+  build-test:
+    parameters:
+      version:
+        type: string
+
+    executor:
+      name: python
+      version: << parameters.version >>
 
     steps:
       - checkout
@@ -86,24 +99,3 @@ jobs:
             trap "kill -SIGINT $server_pid" exit INT TERM
 
             ./run-tests
-
-  build-36:
-    <<: *build-template
-    docker:
-      - image: circleci/python:3.6-node
-      - image: peterjclaw/sr-dev-ldap
-        name: sr-dev-ldap
-
-  build-37:
-    <<: *build-template
-    docker:
-      - image: circleci/python:3.7-node
-      - image: peterjclaw/sr-dev-ldap
-        name: sr-dev-ldap
-
-  build-38:
-    <<: *build-template
-    docker:
-      - image: circleci/python:3.8-node
-      - image: peterjclaw/sr-dev-ldap
-        name: sr-dev-ldap
