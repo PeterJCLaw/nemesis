@@ -1,7 +1,6 @@
-// Place your settings in this file to overwrite default and user settings.
 {
     "python.autoComplete.extraPaths": [
         "nemesis/libnemesis"
     ],
-    "python.pythonPath": "/home/peter/.virtualenvs/nemesis2/bin/python"
+    "python.pythonPath": "${env:VIRTUAL_ENV}/bin/python3",
 }
