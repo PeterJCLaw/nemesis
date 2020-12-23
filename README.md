@@ -42,7 +42,7 @@ In this mode you can either:
 To run the server locally you'll need to install:
 
  * Sqlite 3
- * Python 3
+ * Python 3 (`>=3.6`)
  * `flask`
  * `python-ldap`
  * `unidecode`
